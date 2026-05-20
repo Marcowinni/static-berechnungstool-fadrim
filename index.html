@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Statik-Berechnungstool — Durchlaufträger nach SIA 265</title>
+  <meta name="description" content="Online-Statiktool für Durchlaufträger 1-8 Felder mit FEM, Biegemoment-, Querkraft- und Biegelinie sowie SIA 265 Nachweis." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>Statik-Tool — Durchlaufträger</h1>
+      <span class="subtitle">FEM &middot; SIA 265 (Holz) &middot; SIA 263 (Stahl) &middot; bis 8 Felder</span>
+    </div>
+    <nav class="actions">
+      <button id="btn-load-example" class="btn btn-ghost" type="button">Beispiel laden</button>
+      <button id="btn-reset" class="btn btn-ghost" type="button">Zur&uuml;cksetzen</button>
+      <button id="btn-save" class="btn btn-ghost" type="button">Speichern</button>
+      <input type="file" id="file-load" accept="application/json" hidden />
+      <button id="btn-load" class="btn btn-ghost" type="button">Laden</button>
+      <button id="btn-calc" class="btn btn-primary" type="button">Berechnen</button>
+      <button id="btn-pdf" class="btn btn-primary" type="button">PDF Export</button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <!-- =================== LEFT: INPUT =================== -->
+    <section class="panel input">
+      <h2>Projekt</h2>
+      <div class="grid grid-2">
+        <label>Projekt
+          <input type="text" id="prj-name" value="Beispielprojekt" />
+        </label>
+        <label>Bauteil / Position
+          <input type="text" id="prj-pos" value="Position B1" />
+        </label>
+        <label>Ingenieur/in
+          <input type="text" id="prj-eng" value="" />
+        </label>
+        <label>Datum
+          <input type="date" id="prj-date" />
+        </label>
+      </div>
+
+      <h2>System &mdash; Felder &amp; Auflager</h2>
+      <div class="grid grid-2">
+        <label>Anzahl Felder
+          <input type="number" id="num-spans" min="1" max="8" value="2" />
+        </label>
+        <label>Elementteilung pro Feld (FEM)
+          <input type="number" id="elem-per-span" min="10" max="100" value="30" />
+        </label>
+      </div>
+      <table id="tbl-spans" class="data-table">
+        <thead><tr><th>Feld</th><th>L&auml;nge L [m]</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <table id="tbl-supports" class="data-table">
+        <thead>
+          <tr>
+            <th>Auflager</th>
+            <th>Position</th>
+            <th>Typ</th>
+            <th>K<sub>v</sub> [kN/m]<br/><span class="hint">Federsteifigkeit vertikal</span></th>
+            <th>K<sub>&phi;</sub> [kNm/rad]<br/><span class="hint">Drehfeder</span></th>
+            <th>Senkung [mm]</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="hint">Typ: <b>Fest</b> = w=0 &amp; &phi;=0, <b>Gelenkig</b> = w=0, <b>Rollen</b> = w=0, <b>Feder</b> = endliche Steifigkeit. Bei Federn wird K<sub>v</sub> bzw. K<sub>&phi;</sub> ber&uuml;cksichtigt.</p>
+
+      <h2>Material</h2>
+      <div class="grid grid-2">
+        <label>Werkstoff-Klasse
+          <select id="mat-class">
+            <optgroup label="Vollholz Nadelholz (SIA 265:2021)">
+              <option value="C16">C16</option>
+              <option value="C20">C20</option>
+              <option value="C24" selected>C24</option>
+              <option value="C30">C30</option>
+              <option value="C35">C35</option>
+              <option value="C40">C40</option>
+            </optgroup>
+            <optgroup label="Brettschichtholz (SIA 265:2021)">
+              <option value="GL20h">GL20h</option>
+              <option value="GL22h">GL22h</option>
+              <option value="GL24h">GL24h</option>
+              <option value="GL26h">GL26h</option>
+              <option value="GL28h">GL28h</option>
+              <option value="GL30h">GL30h</option>
+              <option value="GL32h">GL32h</option>
+              <option value="GL24c">GL24c</option>
+              <option value="GL28c">GL28c</option>
+            </optgroup>
+            <optgroup label="Stahl (SIA 263) - vereinfacht">
+              <option value="S235">S235</option>
+              <option value="S355">S355</option>
+            </optgroup>
+          </select>
+        </label>
+        <label>Nutzungsklasse (NKL)
+          <select id="mat-sc">
+            <option value="1">NKL 1 (trocken, innen)</option>
+            <option value="2">NKL 2 (gedeckt aussen)</option>
+            <option value="3">NKL 3 (Bewitterung)</option>
+          </select>
+        </label>
+        <label>Lasteinwirkungsdauer (massgebend)
+          <select id="mat-ld">
+            <option value="permanent">staendig (G)</option>
+            <option value="long">lang (&gt; 6 Monate)</option>
+            <option value="medium" selected>mittel (1 Wo - 6 Mt)</option>
+            <option value="short">kurz (&lt; 1 Wo)</option>
+            <option value="instant">sehr kurz / Stoss</option>
+          </select>
+        </label>
+        <label>&gamma;<sub>M</sub> Teilsicherheitsbeiwert
+          <input type="number" step="0.05" id="mat-gm" value="1.70" />
+        </label>
+      </div>
+      <div class="material-display" id="material-display"></div>
+
+      <h2>Querschnitt</h2>
+      <div class="grid grid-2">
+        <label>Form
+          <select id="sec-shape">
+            <option value="rect" selected>Rechteck</option>
+            <option value="circle">Kreis</option>
+            <option value="IPE">IPE-Profil (Stahl)</option>
+            <option value="HEA">HEA-Profil (Stahl)</option>
+            <option value="HEB">HEB-Profil (Stahl)</option>
+            <option value="custom">Benutzerdefiniert (A, I, W)</option>
+          </select>
+        </label>
+        <label>Profilbezeichnung / Werte
+          <input type="text" id="sec-profile" value="" placeholder="z. B. IPE 240" />
+        </label>
+        <label>Breite b [mm]
+          <input type="number" id="sec-b" value="120" />
+        </label>
+        <label>H&ouml;he h [mm]
+          <input type="number" id="sec-h" value="240" />
+        </label>
+        <label>Durchmesser d [mm]
+          <input type="number" id="sec-d" value="200" />
+        </label>
+        <label>A [cm&sup2;]
+          <input type="number" step="0.01" id="sec-A" value="" />
+        </label>
+        <label>I<sub>y</sub> [cm&#8308;]
+          <input type="number" step="0.01" id="sec-I" value="" />
+        </label>
+        <label>W<sub>y</sub> [cm&sup3;]
+          <input type="number" step="0.01" id="sec-W" value="" />
+        </label>
+      </div>
+      <div class="section-display" id="section-display"></div>
+
+      <h2>Lasten</h2>
+      <div class="loads-controls">
+        <button id="btn-add-line" type="button" class="btn btn-secondary">+ Linienlast</button>
+        <button id="btn-add-point" type="button" class="btn btn-secondary">+ Punktlast</button>
+        <button id="btn-add-moment" type="button" class="btn btn-secondary">+ Moment</button>
+      </div>
+      <table id="tbl-loads" class="data-table">
+        <thead>
+          <tr>
+            <th>Nr.</th><th>Typ</th><th>Einwirkung</th>
+            <th>q<sub>1</sub> bzw. P / M</th><th>q<sub>2</sub></th>
+            <th>x<sub>1</sub> [m]</th><th>x<sub>2</sub> [m]</th>
+            <th>&gamma;<sub>F</sub></th><th>&psi;</th><th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="hint">Einwirkungen werden in der Bemessungskombination 1.35&middot;G + 1.5&middot;Q (Standard) bzw. mit den unten angegebenen Faktoren kombiniert. Beim Quasi-st&auml;ndigen GZG wird &psi;<sub>2</sub> verwendet.</p>
+
+      <h2>Lastkombinationen</h2>
+      <div class="grid grid-3">
+        <label>&gamma;<sub>G</sub>
+          <input type="number" step="0.05" id="gam-G" value="1.35" />
+        </label>
+        <label>&gamma;<sub>Q</sub>
+          <input type="number" step="0.05" id="gam-Q" value="1.50" />
+        </label>
+        <label>w<sub>zul</sub> = L/
+          <input type="number" id="w-lim-net" value="300" />
+        </label>
+      </div>
+    </section>
+
+    <!-- =================== RIGHT: OUTPUT =================== -->
+    <section class="panel output">
+      <h2>System &amp; Belastung</h2>
+      <div id="diagram-system" class="diagram"></div>
+
+      <h2>Schnittgr&ouml;ssen &mdash; Bemessungslast (GZT)</h2>
+      <div class="result-summary" id="summary"></div>
+
+      <h3>Biegemomentenverlauf M [kNm]</h3>
+      <div id="diagram-M" class="diagram"></div>
+
+      <h3>Querkraftverlauf V [kN]</h3>
+      <div id="diagram-V" class="diagram"></div>
+
+      <h3>Biegelinie w [mm] &mdash; GZG quasi-st&auml;ndig</h3>
+      <div id="diagram-w" class="diagram"></div>
+
+      <h3>Auflagerreaktionen</h3>
+      <table id="tbl-reactions" class="data-table">
+        <thead><tr><th>Auflager</th><th>R<sub>v</sub> [kN]</th><th>M [kNm]</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <h2>Nachweise nach SIA 265</h2>
+      <div id="verification-result"></div>
+
+      <h2>Rechnungsweg / Pr&uuml;fdokumentation</h2>
+      <div id="calc-trace" class="trace"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Statik-Tool &middot; FEM-Berechnung im Browser &middot; Nachweis nach SIA 265 (Holzbau).
+      <b>Hinweis:</b> Diese Software ist ein Werkzeug zur Unterst&uuml;tzung. Verantwortung f&uuml;r das Bemessungsresultat liegt beim Anwender (Tragwerksplaner/in). Resultate sind vor Verwendung manuell zu pr&uuml;fen.
+    </p>
+    <p class="version">Version 1.0 &middot; Open Source &middot; <a href="https://github.com/marcowinni/static-berechnungstool-fadrim" target="_blank" rel="noopener">Quellcode</a></p>
+  </footer>
+
+  <!-- External libraries via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- App modules -->
+  <script src="js/linalg.js"></script>
+  <script src="js/materials.js"></script>
+  <script src="js/sections.js"></script>
+  <script src="js/fem.js"></script>
+  <script src="js/sia265.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/pdf-export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
