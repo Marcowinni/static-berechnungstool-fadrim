@@ -25,7 +25,7 @@
       { kind: "line", action: "Q", q1: 4.0, q2: 4.0, x1: 0, x2: 8.0, gammaF: 1.50, psi: 0.3 }
     ],
     nElemPerSpan: 30,
-    project: { name: "Beispielprojekt", position: "Position B1", engineer: "", date: new Date().toISOString().slice(0,10) },
+    project: { name: "Beispielprojekt", position: "Position B1", engineer: "Fadri Landolt", date: new Date().toISOString().slice(0,10) },
     material: { name: "C24" },
     serviceClass: "1",
     loadDuration: "medium",
@@ -755,7 +755,7 @@
         { kind: "point", action: "Q", P: 8.0, x: 6.75, gammaF: 1.50, psi: 0.3 }
       ],
       nElemPerSpan: 30,
-      project: { name: "Beispiel - Holzbalken Etagendecke", position: "Hauptbalken HB1", engineer: "", date: new Date().toISOString().slice(0,10) },
+      project: { name: "Beispiel - Holzbalken Etagendecke", position: "Hauptbalken HB1", engineer: "Fadri Landolt", date: new Date().toISOString().slice(0,10) },
       material: { name: "GL24h" },
       serviceClass: "1",
       loadDuration: "medium",
@@ -783,7 +783,7 @@
         { kind: "line", action: "Q", q1: 4.0, q2: 4.0, x1: 0, x2: 8.0, gammaF: 1.50, psi: 0.3 }
       ],
       nElemPerSpan: 30,
-      project: { name: "Beispielprojekt", position: "Position B1", engineer: "", date: new Date().toISOString().slice(0,10) },
+      project: { name: "Beispielprojekt", position: "Position B1", engineer: "Fadri Landolt", date: new Date().toISOString().slice(0,10) },
       material: { name: "C24" },
       serviceClass: "1",
       loadDuration: "medium",
@@ -800,7 +800,9 @@
   function init() {
     // Set today
     if (!state.project.date) state.project.date = new Date().toISOString().slice(0,10);
+    if (!state.project.engineer) state.project.engineer = "Fadri Landolt";
     $("#prj-date").value = state.project.date;
+    $("#prj-eng").value = state.project.engineer;
 
     // Render initial tables
     applyStateToUI();

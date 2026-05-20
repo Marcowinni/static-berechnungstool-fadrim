@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Statik-Berechnungstool — Durchlaufträger nach SIA 265</title>
-  <meta name="description" content="Online-Statiktool für Durchlaufträger 1-8 Felder mit FEM, Biegemoment-, Querkraft- und Biegelinie sowie SIA 265 Nachweis." />
+  <title>Statik-Tool Landolt Engineering — Durchlaufträger nach SIA 265</title>
+  <meta name="description" content="Online-Statiktool für Durchlaufträger 1-8 Felder mit FEM, Biegemoment-, Querkraft- und Biegelinie sowie SIA 265 Nachweis. Entwickelt von Fadri Landolt." />
+  <meta name="author" content="Fadri Landolt - Landolt Engineering" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -12,6 +13,10 @@
     <div class="brand">
       <h1>Statik-Tool — Durchlaufträger</h1>
       <span class="subtitle">FEM &middot; SIA 265 (Holz) &middot; SIA 263 (Stahl) &middot; bis 8 Felder</span>
+    </div>
+    <div class="author-badge">
+      <div class="author-firm">LANDOLT ENGINEERING</div>
+      <div class="author-name">Erstellt von Fadri Landolt</div>
     </div>
     <nav class="actions">
       <button id="btn-load-example" class="btn btn-ghost" type="button">Beispiel laden</button>
@@ -223,11 +228,15 @@
   </main>
 
   <footer class="footer">
+    <div class="footer-author">
+      <div class="footer-firm">LANDOLT ENGINEERING</div>
+      <div class="footer-name">Entwickelt und erstellt von <b>Fadri Landolt</b></div>
+    </div>
     <p>
       Statik-Tool &middot; FEM-Berechnung im Browser &middot; Nachweis nach SIA 265 (Holzbau).
       <b>Hinweis:</b> Diese Software ist ein Werkzeug zur Unterst&uuml;tzung. Verantwortung f&uuml;r das Bemessungsresultat liegt beim Anwender (Tragwerksplaner/in). Resultate sind vor Verwendung manuell zu pr&uuml;fen.
     </p>
-    <p class="version">Version 1.0 &middot; Open Source &middot; <a href="https://github.com/marcowinni/static-berechnungstool-fadrim" target="_blank" rel="noopener">Quellcode</a></p>
+    <p class="version">Version 1.0 &middot; &copy; Landolt Engineering &middot; <a href="https://github.com/marcowinni/static-berechnungstool-fadrim" target="_blank" rel="noopener">Quellcode</a></p>
   </footer>
 
   <!-- External libraries via CDN -->

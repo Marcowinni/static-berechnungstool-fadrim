@@ -132,6 +132,16 @@
 
     /* ====================== PAGE 1: COVER ====================== */
     header("Statische Berechnung");
+
+    // Big LANDOLT ENGINEERING brand banner on top
+    doc.setFillColor(29, 39, 51);
+    doc.rect(margin, y, pageW - 2*margin, 22, "F");
+    doc.setFontSize(20); doc.setTextColor(255, 255, 255); doc.setFont(undefined, "bold");
+    doc.text("LANDOLT ENGINEERING", pageW/2, y + 10, { align: "center" });
+    doc.setFontSize(9); doc.setTextColor(214, 93, 44); doc.setFont(undefined, "normal");
+    doc.text("Tragwerksplanung  |  Statische Berechnungen  |  SIA-konform", pageW/2, y + 17, { align: "center" });
+    y += 30;
+
     doc.setFontSize(18); doc.setTextColor(11, 95, 255); doc.setFont(undefined, "bold");
     doc.text("Statik-Bericht", margin, y + 6); y += 12;
     doc.setFontSize(14); doc.setTextColor(30, 30, 50);
@@ -147,9 +157,12 @@
     doc.text(ctx.project.name, margin, y); y += 6;
     doc.setFont(undefined, "normal"); doc.setFontSize(10); doc.setTextColor(60, 60, 60);
     doc.text("Position / Bauteil: " + ctx.project.position, margin, y); y += 5;
-    doc.text("Ingenieur/in: " + (ctx.project.engineer || "-"), margin, y); y += 5;
+    doc.text("Ingenieur/in: " + (ctx.project.engineer || "Fadri Landolt"), margin, y); y += 5;
     doc.text("Datum: " + (ctx.project.date || "-"), margin, y); y += 5;
-    doc.text("Berechnet mit: Statik-Berechnungstool v1.0 (FEM-Solver, Hermite-Element)", margin, y); y += 8;
+    doc.text("Berechnet mit: Statik-Tool Landolt Engineering v1.0 (FEM-Solver, Hermite-Element)", margin, y); y += 5;
+    doc.setFontSize(9); doc.setTextColor(214, 93, 44); doc.setFont(undefined, "bold");
+    doc.text("Erstellt und entwickelt von Fadri Landolt - Landolt Engineering", margin, y); y += 8;
+    doc.setFont(undefined, "normal"); doc.setTextColor(60, 60, 60);
 
     h1("1. System & Belastung (Übersicht)");
     txt("Anzahl Felder: " + ctx.spec.spans.length + "    Gesamtlänge: " + ctx.spec.spans.reduce(function(a,b){return a+b;},0).toFixed(2) + " m");
@@ -312,11 +325,11 @@
       /* ====================== PAGE: FOOTER / DISCLAIMER ====================== */
       newPage("Prüfung & Hinweise");
       h1("12. Pruefung & Unterschrift");
-      txt("Berechnet von:                         ____________________________      Datum: __________");
+      txt("Berechnet von:    Fadri Landolt - Landolt Engineering    ____________________________      Datum: __________");
       y += 4;
-      txt("Geprueft von:                          ____________________________      Datum: __________");
+      txt("Geprueft von:                                            ____________________________      Datum: __________");
       y += 4;
-      txt("Visiert / Freigegeben:                 ____________________________      Datum: __________");
+      txt("Visiert / Freigegeben:                                   ____________________________      Datum: __________");
       y += 8;
       h1("13. Hinweise zur Verifikation");
       txt("Die Berechnung wurde mit einem Browser-basierten FEM-Solver (Euler-Bernoulli, Hermite Element) "
@@ -341,12 +354,17 @@
         + "ausschliesslich beim Anwender / der Tragwerksplanerin. Vor der baulichen Umsetzung sind die Resultate "
         + "durch fachkundige Personen zu pruefen.");
 
-      // Footer on every page: software disclaimer
+      // Footer on every page: software disclaimer + author brand
       var totalPages = doc.internal.getNumberOfPages();
       for (var p = 1; p <= totalPages; p++) {
         doc.setPage(p);
-        doc.setFontSize(7); doc.setTextColor(160, 160, 160);
-        doc.text("Statik-Berechnungstool v1.0 - FEM-Solver - SIA 265:2021. Resultate manuell pruefen.", margin, pageH - 8);
+        doc.setDrawColor(214, 93, 44); doc.setLineWidth(0.4);
+        doc.line(margin, pageH - 12, pageW - margin, pageH - 12);
+        doc.setFontSize(8); doc.setTextColor(214, 93, 44); doc.setFont(undefined, "bold");
+        doc.text("LANDOLT ENGINEERING", margin, pageH - 8);
+        doc.setFont(undefined, "normal"); doc.setFontSize(7); doc.setTextColor(120, 120, 120);
+        doc.text("Erstellt von Fadri Landolt  -  Statik-Tool v1.0  -  SIA 265:2021  -  Resultate manuell pruefen.", margin + 38, pageH - 8);
+        doc.setTextColor(60, 60, 60);
         doc.text(p + " / " + totalPages, pageW - margin, pageH - 8, { align: "right" });
       }
 

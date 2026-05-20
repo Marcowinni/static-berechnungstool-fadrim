@@ -1,5 +1,7 @@
 # Statik-Berechnungstool — Durchlaufträger nach SIA 265
 
+> **Entwickelt und erstellt von Fadri Landolt — Landolt Engineering**
+
 Ein browserbasiertes Statik-Tool für die Berechnung von Durchlaufträgern (1 bis 8 Felder)
 mit Nachweisen nach **SIA 265:2021 (Holzbau)** bzw. vereinfacht nach SIA 263 (Stahl).
 Vollständig clientseitig, kein Backend nötig — direkt als GitHub-Page / Vercel-Site nutzbar.
@@ -119,6 +121,11 @@ Da rein statisch, kann das Tool auf jedem Webserver gehostet werden:
 python3 -m http.server 8000
 # dann http://localhost:8000 öffnen
 ```
+
+## Autor
+
+**Fadri Landolt** — *Landolt Engineering*
+Tragwerksplanung · Statische Berechnungen · SIA-konform
 
 ## Lizenz
 
