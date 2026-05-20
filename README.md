@@ -86,17 +86,39 @@ Dann `http://localhost:8000` aufrufen.
 
 ## Deployment
 
-### GitHub Pages
-Workflow ist in `.github/workflows/deploy-pages.yml` konfiguriert. Aktivieren:
-1. Repository → Settings → Pages
-2. Source: "GitHub Actions"
-3. Push auf `main` triggert das Deployment automatisch.
+### Option 1: GitHub Pages (empfohlen, kostenlos)
 
-### Vercel
-1. Repository auf [vercel.com](https://vercel.com) importieren.
-2. Framework Preset: "Other" (statische Site).
-3. Build Command leer lassen, Output Directory `.`.
-4. Deployen.
+Workflow ist in `.github/workflows/deploy-pages.yml` konfiguriert:
+
+1. Repository öffnen → **Settings** → **Pages**
+2. **Source**: "GitHub Actions" wählen
+3. Sobald aktiv, läuft das Deployment automatisch bei jedem Push auf
+   `main` oder `claude/beam-calculation-tool-0mvoX`
+4. URL nach Deployment: `https://<username>.github.io/static-berechnungstool-fadrim/`
+
+Manueller Trigger: Repository → Actions → "Deploy to GitHub Pages" → "Run workflow"
+
+### Option 2: Vercel (mit Auto-Deploy)
+
+1. Auf [vercel.com](https://vercel.com) anmelden
+2. **Add New → Project** → GitHub-Repository importieren
+3. Framework Preset: **Other** (statische Site)
+4. Build Command und Install Command leer lassen
+5. Output Directory: `.` (Root)
+6. **Deploy** klicken
+7. Jeder weitere Push triggert auto-Deployment
+
+`vercel.json` ist bereits konfiguriert mit Cache-Headers für optimale Performance.
+
+### Option 3: Lokal / Eigenes Hosting
+
+Da rein statisch, kann das Tool auf jedem Webserver gehostet werden:
+
+```bash
+# Nginx, Apache, Caddy oder einfacher Python-Server:
+python3 -m http.server 8000
+# dann http://localhost:8000 öffnen
+```
 
 ## Lizenz
 
